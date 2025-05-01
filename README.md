@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Farming Cost Calculator<br>Deborah farm</title>
+  <title>Farming Cost Calculator<br> Deborah Farm </title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -28,6 +29,7 @@
       color: white;
       border: none;
       border-radius: 5px;
+      margin-top: 10px;
     }
     #total {
       margin-top: 15px;
@@ -56,9 +58,12 @@
 
     <button onclick="calculateTotal()">Calculate Total Cost</button>
     <div id="total">Total: KES 0</div>
+    <button onclick="exportPDF()">Export as PDF</button>
   </div>
 
   <script>
+    let lastTotal = 0;
+
     function calculateTotal() {
       const seeds = parseFloat(document.getElementById('seeds').value) || 0;
       const fertilizer = parseFloat(document.getElementById('fertilizer').value) || 0;
@@ -67,8 +72,30 @@
       const other = parseFloat(document.getElementById('other').value) || 0;
 
       const total = seeds + fertilizer + labor + transport + other;
+      lastTotal = total;
 
       document.getElementById('total').innerText = `Total: KES ${total.toLocaleString()}`;
+    }
+
+    async function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const seeds = document.getElementById('seeds').value || 0;
+      const fertilizer = document.getElementById('fertilizer').value || 0;
+      const labor = document.getElementById('labor').value || 0;
+      const transport = document.getElementById('transport').value || 0;
+      const other = document.getElementById('other').value || 0;
+
+      doc.text("Farming Cost Summary", 20, 20);
+      doc.text(`Seeds: KES ${seeds}`, 20, 40);
+      doc.text(`Fertilizer: KES ${fertilizer}`, 20, 50);
+      doc.text(`Labor: KES ${labor}`, 20, 60);
+      doc.text(`Transport: KES ${transport}`, 20, 70);
+      doc.text(`Other: KES ${other}`, 20, 80);
+      doc.text(`Total Cost: KES ${lastTotal.toLocaleString()}`, 20, 100);
+
+      doc.save("Farming_Cost_Summary.pdf");
     }
   </script>
 </body>
