@@ -1,7 +1,8 @@
 Powered by Abicheru Technologies 
+To modify call 0796548552
 <html>
 <head>
-  <title>Deborah farm Farming Cost Calculator</title>
+  <title>Myfarm - Farming Cost Calculator</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
@@ -9,6 +10,7 @@ Powered by Abicheru Technologies
       padding: 20px;
       background: #f4f4f4;
     }
+
     .container {
       max-width: 500px;
       margin: auto;
@@ -17,12 +19,19 @@ Powered by Abicheru Technologies
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+
+    h2 {
+      color: #333;
+    }
+
     input, button {
       width: 100%;
       padding: 10px;
       margin: 8px 0;
       box-sizing: border-box;
+      font-size: 16px;
     }
+
     button {
       background: green;
       color: white;
@@ -30,23 +39,43 @@ Powered by Abicheru Technologies
       border-radius: 5px;
       cursor: pointer;
     }
+
     button:hover {
       background: darkgreen;
     }
+
     #categories input {
       margin-top: 5px;
     }
+
     .row {
       display: flex;
       gap: 10px;
+      margin-bottom: 10px;
     }
+
     .row input {
       flex: 1;
     }
+
     #total {
       margin-top: 15px;
       font-size: 18px;
       font-weight: bold;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+      color: #777;
     }
   </style>
 </head>
@@ -54,7 +83,7 @@ Powered by Abicheru Technologies
   <div class="container">
     <h2>Farming Cost Calculator</h2>
 
-    <div class="row">
+    <div class="input-group">
       <input type="text" id="newCategoryName" placeholder="Enter category name (e.g. Seeds)">
       <button onclick="addCategory()">Add Category</button>
     </div>
@@ -64,6 +93,10 @@ Powered by Abicheru Technologies
     <button onclick="calculateTotal()">Calculate Total Cost</button>
     <div id="total">Total: KES 0</div>
     <button onclick="exportPDF()">Export as PDF</button>
+
+    <footer>
+      Powered by Abicheru Technologies
+    </footer>
   </div>
 
   <script>
