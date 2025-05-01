@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+Powered by Abicheru Technologies 
 <html>
 <head>
-  <title>Farming Cost Calculator<br> Deborah Farm </title>
+  <title>Deborah farm Farming Cost Calculator</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
@@ -10,26 +10,38 @@
       background: #f4f4f4;
     }
     .container {
-      max-width: 400px;
+      max-width: 500px;
       margin: auto;
       background: white;
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    input {
+    input, button {
       width: 100%;
-      padding: 8px;
+      padding: 10px;
       margin: 8px 0;
+      box-sizing: border-box;
     }
     button {
-      padding: 10px;
-      width: 100%;
       background: green;
       color: white;
       border: none;
       border-radius: 5px;
-      margin-top: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: darkgreen;
+    }
+    #categories input {
+      margin-top: 5px;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    .row input {
+      flex: 1;
     }
     #total {
       margin-top: 15px;
@@ -41,20 +53,13 @@
 <body>
   <div class="container">
     <h2>Farming Cost Calculator</h2>
-    <label>Seeds (KES):</label>
-    <input type="number" id="seeds" placeholder="e.g. 2000">
-    
-    <label>Fertilizer (KES):</label>
-    <input type="number" id="fertilizer" placeholder="e.g. 1500">
-    
-    <label>Labor (KES):</label>
-    <input type="number" id="labor" placeholder="e.g. 3000">
-    
-    <label>Transport (KES):</label>
-    <input type="number" id="transport" placeholder="e.g. 1000">
 
-    <label>Other (KES):</label>
-    <input type="number" id="other" placeholder="e.g. 500">
+    <div class="row">
+      <input type="text" id="newCategoryName" placeholder="Enter category name (e.g. Seeds)">
+      <button onclick="addCategory()">Add Category</button>
+    </div>
+
+    <div id="categories"></div>
 
     <button onclick="calculateTotal()">Calculate Total Cost</button>
     <div id="total">Total: KES 0</div>
@@ -64,16 +69,30 @@
   <script>
     let lastTotal = 0;
 
+    function addCategory() {
+      const name = document.getElementById('newCategoryName').value.trim();
+      if (!name) return;
+
+      const container = document.createElement('div');
+      container.className = 'row';
+      container.innerHTML = `
+        <input type="text" value="${name}" disabled>
+        <input type="number" placeholder="KES 0" data-name="${name}" class="amount">
+      `;
+      document.getElementById('categories').appendChild(container);
+
+      document.getElementById('newCategoryName').value = '';
+    }
+
     function calculateTotal() {
-      const seeds = parseFloat(document.getElementById('seeds').value) || 0;
-      const fertilizer = parseFloat(document.getElementById('fertilizer').value) || 0;
-      const labor = parseFloat(document.getElementById('labor').value) || 0;
-      const transport = parseFloat(document.getElementById('transport').value) || 0;
-      const other = parseFloat(document.getElementById('other').value) || 0;
+      const amountFields = document.querySelectorAll('.amount');
+      let total = 0;
 
-      const total = seeds + fertilizer + labor + transport + other;
+      amountFields.forEach(field => {
+        total += parseFloat(field.value) || 0;
+      });
+
       lastTotal = total;
-
       document.getElementById('total').innerText = `Total: KES ${total.toLocaleString()}`;
     }
 
@@ -81,20 +100,18 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
 
-      const seeds = document.getElementById('seeds').value || 0;
-      const fertilizer = document.getElementById('fertilizer').value || 0;
-      const labor = document.getElementById('labor').value || 0;
-      const transport = document.getElementById('transport').value || 0;
-      const other = document.getElementById('other').value || 0;
-
       doc.text("Farming Cost Summary", 20, 20);
-      doc.text(`Seeds: KES ${seeds}`, 20, 40);
-      doc.text(`Fertilizer: KES ${fertilizer}`, 20, 50);
-      doc.text(`Labor: KES ${labor}`, 20, 60);
-      doc.text(`Transport: KES ${transport}`, 20, 70);
-      doc.text(`Other: KES ${other}`, 20, 80);
-      doc.text(`Total Cost: KES ${lastTotal.toLocaleString()}`, 20, 100);
+      const amountFields = document.querySelectorAll('.amount');
 
+      let y = 40;
+      amountFields.forEach(field => {
+        const name = field.dataset.name;
+        const value = parseFloat(field.value) || 0;
+        doc.text(`${name}: KES ${value.toLocaleString()}`, 20, y);
+        y += 10;
+      });
+
+      doc.text(`Total Cost: KES ${lastTotal.toLocaleString()}`, 20, y + 10);
       doc.save("Farming_Cost_Summary.pdf");
     }
   </script>
